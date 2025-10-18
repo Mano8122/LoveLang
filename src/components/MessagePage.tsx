@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Heart, Send } from 'lucide-react';
+import { supabase } from '../supabase';
 
 interface MessagePageProps {
   recipientName: string;
@@ -19,25 +20,15 @@ export default function MessagePage({ recipientName, sessionId }: MessagePagePro
     setIsSubmitting(true);
 
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-      const apiUrl = `${supabaseUrl}/functions/v1/send-whatsapp-message`;
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${supabaseKey}`,
-        },
-        body: JSON.stringify({
+      const { error } = await supabase.functions.invoke('send-whatsapp-message', {
+        body: {
           sessionId,
           message: message.trim(),
-        }),
+        },
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to send message');
+      if (error) {
+        throw error;
       }
 
       setShowSuccess(true);

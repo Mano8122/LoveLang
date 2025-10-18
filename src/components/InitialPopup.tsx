@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Heart } from 'lucide-react';
+import { supabase } from '../supabase';
 
 interface InitialPopupProps {
   onSubmit: (whatsapp: string, recipientName: string, sessionId: string) => void;
@@ -29,33 +30,24 @@ export default function InitialPopup({ onSubmit }: InitialPopupProps) {
     setIsSubmitting(true);
 
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-      const response = await fetch(`${supabaseUrl}/rest/v1/couple_sessions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Prefer': 'return=representation',
-        },
-        body: JSON.stringify({
+      const { data, error: insertError } = await supabase
+        .from('couple_sessions')
+        .insert({
           sender_whatsapp: whatsapp.replace(/\s/g, ''),
           recipient_name: recipientName.trim(),
-        }),
-      });
+        })
+        .select()
+        .single();
 
-      if (!response.ok) {
-        throw new Error('Failed to create session');
+      if (insertError) {
+        throw insertError;
       }
 
-      const data = await response.json();
-      const sessionId = data[0].id;
-
+      const sessionId = data.id;
       onSubmit(whatsapp, recipientName, sessionId);
     } catch (err) {
       setError('Something went wrong. Please try again.');
+    } finally {
       setIsSubmitting(false);
     }
   };
