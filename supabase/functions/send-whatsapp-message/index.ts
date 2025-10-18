@@ -35,8 +35,8 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = ('https://sptvwwkjtdqjjycdmmqy.supabase.co')!;
+    const supabaseServiceKey = ('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwdHZ3d2tqdGRxamp5Y2RtbXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA2ODMzMjIsImV4cCI6MjA3NjI1OTMyMn0._WANC6vDfwJUnh-ZeivIH7bb6b-sdFncKa7GnwluzO4')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { data: session, error: sessionError } = await supabase
