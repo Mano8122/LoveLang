@@ -12,6 +12,9 @@ def run(playwright):
     page.fill('input[id="recipient"]', 'Jane Doe')
     page.click('button[type="submit"]')
 
+    # Wait for the URL to change, indicating a successful transition
+    page.wait_for_url('**/', timeout=60000)
+
     page.wait_for_selector('textarea')
 
     page.fill('textarea', 'This is a test message.')
